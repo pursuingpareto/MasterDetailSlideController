@@ -150,9 +150,11 @@ class MasterDetailController: UIViewController {
     }
     
     func handlePan(sender: UIPanGestureRecognizer) {
+//        println("handling")
         let translation = sender.translationInView(self.view)
         switch sender.state {
         case .Began:
+            println("began")
             startLocationOfLastPan = sender.locationInView(self.view)
             if abs(translation.x) > abs(translation.y) {
                 sender.enabled = false
@@ -161,11 +163,16 @@ class MasterDetailController: UIViewController {
                 detailContainer.pagingEnabled = false
             }
         case .Changed:
+            
             if let view = sender.view?.superview as? DetailContainer {
-                var progress = getProgress(forCurrentTouchLocation: sender.locationInView(view))
+
+                var progress = getProgress(forCurrentTouchLocation: sender.locationInView(self.view))
+//                println(progress)
                 detailExpansionProgress = progress
+
             }
         case .Ended:
+            println("ended")
             // TODO: Implement inertia
             snapDetailContainerToPlace()
         default:
@@ -204,14 +211,15 @@ class MasterDetailController: UIViewController {
     
     func getProgress(forCurrentTouchLocation location: CGPoint) -> CGFloat {
         let verticalDistance = location.y - startLocationOfLastPan.y
+        println("vertical distance is \(verticalDistance)")
         let progress: CGFloat!
         switch detailContainer.expansionState {
         case .Collapsed:
             progress = verticalDistance / (detailContainer.layer.frame.height - startLocationOfLastPan.y)
-            println("collapsed")
+//            println("collapsed")
         case .Expanded:
             progress = 1.0 - (verticalDistance / detailContainer.bounds.height)
-            println("expanded")
+//            println("expanded")
         }
         return progress
     }

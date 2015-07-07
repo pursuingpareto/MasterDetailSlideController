@@ -13,9 +13,12 @@ class MasterContainer: UIScrollView {
     let verticalPositionOfPageControl: CGFloat = 6.2 / 7.0
     let heightOfPageControl: CGFloat = 40.0
     
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         // MARK: override UIScrollView property defaults
+        maximumZoomScale = 3.0
+        minimumZoomScale = 0.5
         delaysContentTouches = true
         multipleTouchEnabled = true
         directionalLockEnabled = true

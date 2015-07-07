@@ -27,7 +27,8 @@ class DetailContainer: UIScrollView {
         addZoomView()
 
         setDefaultTransform()
-        
+        maximumZoomScale = 3.0
+        minimumZoomScale = 0.5
         delaysContentTouches = true
         multipleTouchEnabled = true
         pagingEnabled = false
@@ -71,7 +72,9 @@ class DetailContainer: UIScrollView {
     }
     
     func scale(toFactor factor: CGFloat) {
+        println("factor is \(factor)")
         zoomScale = factor
+        println("zoomScale is \(zoomScale)")
     }
     
 }
