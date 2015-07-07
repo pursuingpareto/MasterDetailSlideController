@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>ED19355F-364E-45C5-93CB-FD740E0D51B9</string>
+	<key>IDESourceControlProjectName</key>
+	<string>project</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>0E9C716FA3486BF352BE2332F840335AC2BEA7DF</key>
+		<string>https://github.com/pursuingpareto/MasterDetailSlideController.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>MasterDetailController/MasterDetailController.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>0E9C716FA3486BF352BE2332F840335AC2BEA7DF</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/pursuingpareto/MasterDetailSlideController.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>0E9C716FA3486BF352BE2332F840335AC2BEA7DF</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>0E9C716FA3486BF352BE2332F840335AC2BEA7DF</string>
+			<key>IDESourceControlWCCName</key>
+			<string>MasterDetailSlideController</string>
+		</dict>
+	</array>
+</dict>
+</plist>
