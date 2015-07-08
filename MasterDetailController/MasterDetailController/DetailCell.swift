@@ -49,7 +49,7 @@ class DetailCell: UIView {
         addSubview(descriptionLabel)
         
         self.layer.borderColor = UIColor.blackColor().CGColor
-        self.layer.borderWidth = 1
+//        self.layer.borderWidth = 1
         self.layer.cornerRadius = 4
         self.backgroundColor = UIColor.whiteColor()
     }

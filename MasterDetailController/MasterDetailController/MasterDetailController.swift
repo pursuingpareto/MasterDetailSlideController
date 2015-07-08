@@ -27,6 +27,7 @@ class MasterDetailController: UIViewController {
     var startLocationOfLastPan: CGPoint!
     var detailExpansionProgress: CGFloat = 0 {
         willSet(newValue) {
+                println("Changed progress to \(newValue)")
                 updateViews(forProgress: newValue)
         }
     }
@@ -68,13 +69,18 @@ class MasterDetailController: UIViewController {
     }
     func setupDetailContainer() {
         let numSubViews = rowsInCurrentSection
+        detailContainer.cellsInContainer = numSubViews
         
         for v in detailContainer.zoomView.subviews {
             v.removeFromSuperview()
         }
         
-        updateContentSizeFor(detailContainer)
+//        updateContentSizeFor(detailContainer)
         detailCells = []
+//        detailContainer.bounds.size.width = detailContainer.bounds.height * detailContainer.cellAspectRatio * CGFloat(rowsInCurrentSection)
+        detailContainer.zoomView.bounds.size = detailContainer.frame.size
+        detailContainer.zoomView.bounds.size.width = detailContainer.bounds.height * detailContainer.cellAspectRatio * CGFloat(rowsInCurrentSection)
+        detailContainer.zoomView.frame.origin = CGPointZero
         for _ in 0..<numSubViews {
             detailCells.append(nil)
         }
@@ -111,10 +117,6 @@ class MasterDetailController: UIViewController {
         let frameOriginY = view.bounds.height * fractionOfViewOccupiedByMasterContainer
         let frameHeight = view.bounds.height * (1.0 - fractionOfViewOccupiedByMasterContainer)
         let detailFrame = CGRect(x: 0, y: frameOriginY, width: view.bounds.width, height: frameHeight)
-        
-        println("\n\ndetailFrame is \(detailFrame)")
-        println("fractionOfView is \(fractionOfViewOccupiedByMasterContainer)")
-        
         
         detailContainer = DetailContainer(frame: detailFrame)
         detailContainer.cellAspectRatio = view.bounds.width / view.bounds.height
@@ -167,7 +169,7 @@ class MasterDetailController: UIViewController {
             if let view = sender.view?.superview as? DetailContainer {
 
                 var progress = getProgress(forCurrentTouchLocation: sender.locationInView(self.view))
-//                println(progress)
+
                 detailExpansionProgress = progress
 
             }
@@ -185,13 +187,19 @@ class MasterDetailController: UIViewController {
         var progress: CGFloat!
         if detailExpansionProgress < 0.5 {
             detailContainer.expansionState = .Collapsed
+            masterContainer.userInteractionEnabled = true
+            detailContainer.pagingEnabled = false
             progress = 0.0
         } else {
             detailContainer.expansionState = .Expanded
+            masterContainer.userInteractionEnabled = false
+            detailContainer.pagingEnabled = true
             progress = 1.0
         }
+        println("progress is \(progress)")
         UIView.animateWithDuration(0.5, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0, options: nil, animations: {
                 self.detailExpansionProgress = progress
+                
             }, completion: nil)
     }
     
@@ -225,13 +233,25 @@ class MasterDetailController: UIViewController {
     }
     
     func getScaleFactor(forProgress progress: CGFloat) -> CGFloat {
-        let maxScale:CGFloat = detailContainer.maxScale / (1.0 - fractionOfViewOccupiedByMasterContainer)
-        let minScale:CGFloat = detailContainer.minScale
-        let k: CGFloat = 3.0
-        let arg:CGFloat = (maxScale - minScale) / (1.0 - minScale) - 1.0
-        let logisticX0:CGFloat = (1.0 / k) * log(arg)
-        var newScale: CGFloat = minScale + (maxScale - minScale) / (1 + exp(-k * (progress - logisticX0)))
-        return newScale
+//        let maxScale:CGFloat = detailContainer.maxScale / (1.0 - fractionOfViewOccupiedByMasterContainer)
+//        let minScale:CGFloat = detailContainer.minScale
+        
+        // TODO : ONLY do this calculation once dummy
+        let d: Double = Double(1.0 / (1.0 - fractionOfViewOccupiedByMasterContainer))
+
+        let maxScale: Double = d * 1.2
+        let minScale: Double =  0.5
+        let arg:Double = ((maxScale - d) / (d - minScale)) * ((1.0 - minScale) / (maxScale - 1))
+
+        let k: Double = -log(arg)
+
+        let kp0: Double = log((maxScale - 1) / (1.0 - minScale))
+
+        let p0: Double = kp0 / k
+
+        var newScale: Double = minScale + ((maxScale - minScale) / (1.0 + exp(-k * (Double(progress) - p0))))
+
+        return CGFloat(newScale)
     }
     
     func loadVisiblePagesFor(scrollView view: UIScrollView) {
@@ -258,7 +278,7 @@ class MasterDetailController: UIViewController {
     
     func getIndexOfVisiblePage(view: UIScrollView) -> Int {
         if view is DetailContainer {
-            let pageWidth = detailContainer.frame.size.height * detailContainer.cellAspectRatio * detailContainer.zoomScale
+            let pageWidth = detailContainer.bounds.height * detailContainer.cellAspectRatio * detailContainer.zoomScale
             let pageIndex = Int(floor((detailContainer.contentOffset.x * 2.0 + pageWidth) / (pageWidth * 2.0)))
             return pageIndex
         } else {
@@ -331,11 +351,45 @@ class MasterDetailController: UIViewController {
         let section = Int(floor((masterContainer.contentOffset.x * 2.0 + pageWidth) / (pageWidth * 2.0)))
         return section
     }
-
+    
+    func centerScrollViewContents() {
+        let boundsSize = detailContainer.bounds.size
+        var contentsFrame = detailContainer.zoomView.frame
+        
+        if contentsFrame.size.width < boundsSize.width {
+            contentsFrame.origin.x = (boundsSize.width - contentsFrame.size.width) / 2.0
+        } else {
+            contentsFrame.origin.x = 0.0
+        }
+        
+        if contentsFrame.size.height < boundsSize.height {
+            contentsFrame.origin.y = (boundsSize.height - contentsFrame.size.height) / 2.0
+        } else {
+            contentsFrame.origin.y = 0.0
+        }
+        
+        if contentsFrame.size.height > view.bounds.size.height {
+            contentsFrame.origin.y = (contentsFrame.size.height - view.bounds.size.height)
+        }
+        
+//        detailContainer.zoomView.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, 0.0, detailContainer.layer.frame.height / 2.0)
+        
+//        detailContainer.zoomView.frame = contentsFrame
+    }
+    func addEdgeInsets() {
+//        let heightToAdjust = (detailContainer.frame.size.height - detailContainer.zoomView.frame.size.height) * 0.5
+        let heightToAdjust = detailContainer.frame.size.height * (detailContainer.zoomScale - 1.0)
+        println("heightToAdjust is \(heightToAdjust)")
+        let bottomInset = UIEdgeInsetsMake(0, 0, heightToAdjust, 0)
+        detailContainer.contentInset = bottomInset
+        detailContainer.contentOffset.y = heightToAdjust
+    }
 }
 extension MasterDetailController: UIScrollViewDelegate {
     func scrollViewDidScroll(scrollView: UIScrollView) {
         loadVisiblePagesFor(scrollView: scrollView)
+        addEdgeInsets()
+//        centerScrollViewContents()
     }
     
     func viewForZoomingInScrollView(scrollView: UIScrollView) -> UIView? {
