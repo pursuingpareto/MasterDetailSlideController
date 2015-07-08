@@ -34,9 +34,12 @@ class MasterCell: UIView {
         
         var imageFrame = CGRect(origin: CGPoint(x: 0, y: 0), size: CGSize(width: bounds.width, height: bounds.height))
         var imageView = UIImageView(frame: imageFrame)
-        imageView.contentMode = .ScaleAspectFit
+        imageView.contentMode = .ScaleAspectFill
+        imageView.clipsToBounds = true
+        
         imageView.image = UIImage()
         centerImageView = imageView
         addSubview(imageView)
+        sendSubviewToBack(imageView)
     }
 }

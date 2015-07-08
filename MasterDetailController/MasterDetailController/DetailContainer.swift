@@ -34,7 +34,7 @@ class DetailContainer: UIScrollView {
         delaysContentTouches = true
         multipleTouchEnabled = true
         pagingEnabled = false
-        directionalLockEnabled = true
+        directionalLockEnabled = false
         showsVerticalScrollIndicator = false
         clipsToBounds = false
 //        maximumZoomScale = (1 / ( 1 - fractionOfViewOccupiedByTopView)) * maxScale
@@ -50,15 +50,7 @@ class DetailContainer: UIScrollView {
     }
     
     func setDefaultTransform() {
-//        layer.anchorPoint = anchorPoint
-//        zoomView.layer.anchorPoint = anchorPoint
-//        defaultTransform = CGAffineTransformMakeTranslation(0, 0.5 * layer.frame.height)
-//        transform = defaultTransform
-//        zoomView.transform = defaultTransform
-        zoomView.layer.borderColor = UIColor.redColor().CGColor
-        layer.borderColor = UIColor.blueColor().CGColor
-//        layer.borderWidth = 4
-        zoomView.layer.borderWidth = 2
+
     }
     
     
@@ -73,11 +65,6 @@ class DetailContainer: UIScrollView {
     
     func scale(byFactor factor: CGFloat) {
         zoomScale *= factor
-//        zoomView.transform = CGAffineTransformMakeTranslation(0, 0.5*zoomView.bounds.height)
-//        contentSize = zoomView.bounds.size
-//        contentSize.height *= factor
-//        zoomView.frame.origin.x = 0
-//        zoomView.bounds.size.width = bounds.width / (zoomView.bounds.height / bounds.height)
     }
     
     func snapToTop() {
@@ -93,20 +80,12 @@ class DetailContainer: UIScrollView {
             animated = true
         }
         setZoomScale(factor, animated: animated)
-//        zoomView.transform = CGAffineTransformMakeTranslation(0, 0.5*layer.frame.height)
-        println("zoomView frame is at \(zoomView.frame)")
-        println("zoomView bounds is at \(zoomView.bounds)")
-        println("zoomView layer frame is at \(zoomView.layer.frame)")
-        println("scrollView frame is \(frame)")
-        println("position is \(zoomView.layer.position)")
+
         addEdgeInsets()
-        
-//        zoomScale = factor
-//        contentSize = zoomView.bounds.size
-//        zoomView.bounds.size.width = bounds.width / factor
+
     }
     func addEdgeInsets() {
-//        let heightToAdjust = (frame.size.height - zoomView.layer.frame.size.height) * 0.5
+
         let heightToAdjust = frame.size.height * (zoomScale - 1.0)
         println("heightToAdjust is \(heightToAdjust)")
         let bottomInset = UIEdgeInsetsMake(0, 0, heightToAdjust, 0)

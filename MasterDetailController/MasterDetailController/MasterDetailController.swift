@@ -75,7 +75,7 @@ class MasterDetailController: UIViewController {
             v.removeFromSuperview()
         }
         
-//        updateContentSizeFor(detailContainer)
+        updateContentSizeFor(detailContainer)
         detailCells = []
 //        detailContainer.bounds.size.width = detailContainer.bounds.height * detailContainer.cellAspectRatio * CGFloat(rowsInCurrentSection)
         detailContainer.zoomView.bounds.size = detailContainer.frame.size
@@ -223,10 +223,10 @@ class MasterDetailController: UIViewController {
         let progress: CGFloat!
         switch detailContainer.expansionState {
         case .Collapsed:
-            progress = verticalDistance / (detailContainer.layer.frame.height - startLocationOfLastPan.y)
+            progress = 1.5 * verticalDistance / (detailContainer.layer.frame.height - startLocationOfLastPan.y)
 //            println("collapsed")
         case .Expanded:
-            progress = 1.0 - (verticalDistance / detailContainer.bounds.height)
+            progress = 1.0 - (1.5 * verticalDistance / detailContainer.bounds.height)
 //            println("expanded")
         }
         return progress
@@ -324,6 +324,23 @@ class MasterDetailController: UIViewController {
                 topView.frame = CGRect(origin: frameOrigin, size: frameSize)
                 masterCells[index] = topView
                 masterContainer.addSubview(topView)
+                
+                let boundsSize = masterContainer.bounds.size
+                var contentsFrame = topView.centerImageView.frame
+                
+                if contentsFrame.size.width < boundsSize.width {
+                    contentsFrame.origin.x = (boundsSize.width - contentsFrame.size.width) / 2.0
+                } else {
+                    contentsFrame.origin.x = 0.0
+                }
+                
+                if contentsFrame.size.height < boundsSize.height {
+                    contentsFrame.origin.y = (boundsSize.height - contentsFrame.size.height) / 2.0
+                } else {
+                    contentsFrame.origin.y = 0.0
+                }
+                
+                topView.centerImageView.frame = contentsFrame
             }
         } else if view is DetailContainer {
             
@@ -384,6 +401,7 @@ class MasterDetailController: UIViewController {
         detailContainer.contentInset = bottomInset
         detailContainer.contentOffset.y = heightToAdjust
     }
+  
 }
 extension MasterDetailController: UIScrollViewDelegate {
     func scrollViewDidScroll(scrollView: UIScrollView) {
