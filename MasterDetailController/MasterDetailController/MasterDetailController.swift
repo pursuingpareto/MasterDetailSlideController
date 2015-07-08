@@ -44,7 +44,7 @@ class MasterDetailController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.lightGrayColor()
+        view.backgroundColor = UIColor.blackColor()
         numberOfSections = dataSource.numberOfSections()
         rowsInCurrentSection = dataSource.masterDetailController(numberOfRowsInSection: currentSection)
         
